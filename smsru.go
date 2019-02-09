@@ -114,7 +114,7 @@ func (c *SmsClient) makeRequest(endpoint string, params url.Values) ([]byte, err
 	return []byte(body), err
 }
 
-// SmsSend will send a Sms item to Service
+// Отправка СМС сообщения
 func (c *SmsClient) SmsSend(p *Sms) (SendedSms, error) {
 	var params = url.Values{}
 
@@ -150,7 +150,7 @@ func (c *SmsClient) SmsSend(p *Sms) (SendedSms, error) {
 		params.Set("translit", "1")
 	}
 
-	params.Set("test", "1")
+	// params.Set("test", "1")
 
 	body, err := c.makeRequest("/sms/send", params)
 	if err != nil {
