@@ -1,4 +1,4 @@
-# Golang-client for the sms.ru API #
+# Golang клиент для сервиса sms.ru #
 
 [![Build Status](https://travis-ci.org/dex35/smsru.svg?branch=dev)](https://travis-ci.org/dex35/smsru)
 
