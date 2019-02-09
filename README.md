@@ -5,6 +5,7 @@
 Поддерживаемые методы:
 - sms/send, sms/status, sms/cost
 - my/balance, my/limit, my/free
+- stoplist/add, stoplist/del, stoplist/get
 
 ## Использование ##
 Установка:

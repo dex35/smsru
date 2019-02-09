@@ -206,7 +206,7 @@ func (c *SmsClient) MyBalance() (Balance, error) {
 }
 
 // Получить информацию о бесплатных сообщениях и их использовании
-func (c *SmsClient) FreeSms() (Free, error) {
+func (c *SmsClient) MyFree() (Free, error) {
 	body, err := c.makeRequest("/my/free", url.Values{})
 	if err != nil {
 		return Free{}, err
@@ -232,4 +232,65 @@ func (c *SmsClient) MyLimit() (Limit, error) {
 	}
 
 	return limit, err
+}
+
+// Получение списка одобренных отправителей
+func (c *SmsClient) MySenders() (Senders, error) {
+	body, err := c.makeRequest("/my/senders", url.Values{})
+
+	senders := Senders{}
+	err = json.Unmarshal(body, &senders)
+	if err != nil {
+		return Senders{}, err
+	}
+
+	return senders, err
+}
+
+// Добавление номера в стоплист
+func (c *SmsClient) StoplistAdd(phone string, text string) (StopList, error) {
+	var params = url.Values{}
+
+	params.Set("stoplist_phone", phone)
+	params.Set("stoplist_text", text)
+
+	body, err := c.makeRequest("/stoplist/add", params)
+
+	stoplist := StopList{}
+	err = json.Unmarshal(body, &stoplist)
+	if err != nil {
+		return StopList{}, err
+	}
+
+	return stoplist, err
+}
+
+// Удаление номера из стоплиста
+func (c *SmsClient) StoplistDel(phone string) (StopList, error) {
+	var params = url.Values{}
+
+	params.Set("stoplist_phone", phone)
+
+	body, err := c.makeRequest("/stoplist/del", params)
+
+	stoplist := StopList{}
+	err = json.Unmarshal(body, &stoplist)
+	if err != nil {
+		return StopList{}, err
+	}
+
+	return stoplist, err
+}
+
+// Выгрузка всего стоплиста
+func (c *SmsClient) StoplistGet() (StopList, error) {
+	body, err := c.makeRequest("/stoplist/get", url.Values{})
+
+	stoplist := StopList{}
+	err = json.Unmarshal(body, &stoplist)
+	if err != nil {
+		return StopList{}, err
+	}
+
+	return stoplist, err
 }

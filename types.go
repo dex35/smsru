@@ -73,3 +73,15 @@ type Limit struct {
 	TotalLimit string `json:"total_limit"`
 	UsedToday  int    `json:"used_today"`
 }
+
+type Senders struct {
+	Status     string   `json:"status"`
+	StatusCode int      `json:"status_code"`
+	Senders    []string `json:"senders"`
+}
+
+type StopList struct {
+	Status     string            `json:"status"`
+	StatusCode int               `json:"status_code"`
+	StopList   map[string]string `json:"stoplist"`
+}
