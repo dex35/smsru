@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/dex35/smsru.svg?branch=dev)](https://travis-ci.org/dex35/smsru)
 
 Поддерживаемые методы:
-- sms/send, sms/status, sms/cost
+- sms/send, sms/status, sms/cost, sms/status
 - my/balance, my/limit, my/free, my/senders
 - stoplist/add, stoplist/del, stoplist/get
 - callback/add, callback/del, callback/get
@@ -30,7 +30,7 @@ import (
 func main() {
 	smsClient := smsru.CreateClient("API_KEY")
 
-	// Оправка сообщения
+	// Отправка сообщения
 	phone := "номер телеофна в формате 79991112233"
 	sms := smsru.CreateSMS(phone, "тестовое сообщение")
 	sendedsms, err := smsClient.SmsSend(sms)

@@ -40,6 +40,22 @@ type SendedSms struct {
 	Balance    float32                     `json:balance`
 }
 
+type SmsStatusList struct {
+	Status     string `json:"status"`
+	StatusCode string `json:"status_code"`
+	Cost       string `json:"cost"`
+	StatusText string `json:"status_text"`
+	SendTime   int32  `json:"send_time"`
+	StatusTime int32  `json:"status_time"`
+}
+
+type SmsStatus struct {
+	Status     string                   `json:"status"`
+	StatusCode int                      `json:"status_code"`
+	Sms        map[string]SmsStatusList `json:"sms"`
+	Balance    float32                  `json:"balance"`
+}
+
 type Free struct {
 	Status     string `json:"status"`
 	StatusCode int    `json:"status_code"`

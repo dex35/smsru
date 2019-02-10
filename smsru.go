@@ -166,6 +166,23 @@ func (c *SmsClient) SmsSend(p *Sms) (SendedSms, error) {
 	return sendedSms, nil
 }
 
+// Проверка статуса сообщения
+func (c *SmsClient) SmsStatus(sms_id string) (SmsStatus, error) {
+	var params = url.Values{}
+
+	params.Set("sms_id", sms_id)
+
+	body, err := c.makeRequest("/sms/status", params)
+
+	smsstatuslist := SmsStatus{}
+	err = json.Unmarshal(body, &smsstatuslist)
+	if err != nil {
+		return SmsStatus{}, err
+	}
+
+	return smsstatuslist, err
+}
+
 // Проверка стоимости сообщения перед отправкой
 func (c *SmsClient) SmsCost(p *Sms) (Cost, error) {
 	var params = url.Values{}
