@@ -22,6 +22,7 @@ type Sms struct {
 	Time      time.Time         `json:"time"`
 	Test      bool              `json:"test"`
 	PartnerId int               `json:"partner_id"`
+	SmsId     string            `json:"sms_id"`
 }
 
 // Структуры для генерации ответов от api
@@ -33,10 +34,10 @@ type SendedCostStruct struct {
 }
 
 type SendedSms struct {
-	Status     string                   `json:"status"`
-	StatusCode int                      `json:"status_code"`
-	Sms        map[string]SmsCostStruct `json:"sms"`
-	Balance    float32                  `json:balance`
+	Status     string                      `json:"status"`
+	StatusCode int                         `json:"status_code"`
+	Sms        map[string]SendedCostStruct `json:"sms"`
+	Balance    float32                     `json:balance`
 }
 
 type Free struct {
@@ -84,4 +85,10 @@ type StopList struct {
 	Status     string            `json:"status"`
 	StatusCode int               `json:"status_code"`
 	StopList   map[string]string `json:"stoplist"`
+}
+
+type Callback struct {
+	Status     string   `json:"status"`
+	StatusCode int      `json:"status_code"`
+	Callback   []string `json:"callback"`
 }

@@ -294,3 +294,50 @@ func (c *SmsClient) StoplistGet() (StopList, error) {
 
 	return stoplist, err
 }
+
+// Добавление callback обработчика
+func (c *SmsClient) CallbackAdd(callback_url string) (Callback, error) {
+	var params = url.Values{}
+
+	params.Set("url", callback_url)
+
+	body, err := c.makeRequest("/callback/add", params)
+
+	callback := Callback{}
+	err = json.Unmarshal(body, &callback)
+	if err != nil {
+		return Callback{}, err
+	}
+
+	return callback, err
+}
+
+// Удаление callback обработчика
+func (c *SmsClient) CallbackDel(callback_url string) (Callback, error) {
+	var params = url.Values{}
+
+	params.Set("url", callback_url)
+
+	body, err := c.makeRequest("/callback/del", params)
+
+	callback := Callback{}
+	err = json.Unmarshal(body, &callback)
+	if err != nil {
+		return Callback{}, err
+	}
+
+	return callback, err
+}
+
+// Выгрузка всех callback обработчиков
+func (c *SmsClient) CallbackGet() (Callback, error) {
+	body, err := c.makeRequest("/callback/get", url.Values{})
+
+	callback := Callback{}
+	err = json.Unmarshal(body, &callback)
+	if err != nil {
+		return Callback{}, err
+	}
+
+	return callback, err
+}
