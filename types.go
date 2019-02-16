@@ -42,7 +42,7 @@ type SendedSms struct {
 
 type SmsStatusList struct {
 	Status     string `json:"status"`
-	StatusCode string `json:"status_code"`
+	StatusCode int    `json:"status_code"`
 	Cost       string `json:"cost"`
 	StatusText string `json:"status_text"`
 	SendTime   int32  `json:"send_time"`
