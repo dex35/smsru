@@ -97,21 +97,21 @@ func CreateMultipleSMS(sms ...*Sms) *Sms {
 func (c *SmsClient) makeRequest(endpoint string, params url.Values) ([]byte, error) {
 	params.Set("api_id", c.ApiId)
 	params.Set("json", "1")
-	url := API_URL + endpoint + "?" + params.Encode()
+	u := API_URL + endpoint + "?" + params.Encode()
 
-	response, err := c.Http.Get(url)
+	response, err := c.Http.Get(u)
 	if err != nil {
-		// return false, err
+		return nil, err
 	}
 	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return []byte(body), err
+	return body, err
 }
 
 // Отправка СМС сообщения
@@ -241,7 +241,9 @@ func (c *SmsClient) MyFree() (Free, error) {
 // Проверка информации о дневном лимите
 func (c *SmsClient) MyLimit() (Limit, error) {
 	body, err := c.makeRequest("/my/limit", url.Values{})
-
+	if err != nil {
+		return Limit{}, err
+	}
 	limit := Limit{}
 	err = json.Unmarshal(body, &limit)
 	if err != nil {
@@ -254,7 +256,9 @@ func (c *SmsClient) MyLimit() (Limit, error) {
 // Получение списка одобренных отправителей
 func (c *SmsClient) MySenders() (Senders, error) {
 	body, err := c.makeRequest("/my/senders", url.Values{})
-
+	if err != nil {
+		return Senders{}, err
+	}
 	senders := Senders{}
 	err = json.Unmarshal(body, &senders)
 	if err != nil {
@@ -272,7 +276,9 @@ func (c *SmsClient) StoplistAdd(phone string, text string) (StopList, error) {
 	params.Set("stoplist_text", text)
 
 	body, err := c.makeRequest("/stoplist/add", params)
-
+	if err != nil {
+		return StopList{}, err
+	}
 	stoplist := StopList{}
 	err = json.Unmarshal(body, &stoplist)
 	if err != nil {
@@ -289,7 +295,9 @@ func (c *SmsClient) StoplistDel(phone string) (StopList, error) {
 	params.Set("stoplist_phone", phone)
 
 	body, err := c.makeRequest("/stoplist/del", params)
-
+	if err != nil {
+		return StopList{}, err
+	}
 	stoplist := StopList{}
 	err = json.Unmarshal(body, &stoplist)
 	if err != nil {
@@ -302,7 +310,9 @@ func (c *SmsClient) StoplistDel(phone string) (StopList, error) {
 // Выгрузка всего стоплиста
 func (c *SmsClient) StoplistGet() (StopList, error) {
 	body, err := c.makeRequest("/stoplist/get", url.Values{})
-
+	if err != nil {
+		return StopList{}, err
+	}
 	stoplist := StopList{}
 	err = json.Unmarshal(body, &stoplist)
 	if err != nil {
@@ -319,7 +329,9 @@ func (c *SmsClient) CallbackAdd(callback_url string) (Callback, error) {
 	params.Set("url", callback_url)
 
 	body, err := c.makeRequest("/callback/add", params)
-
+	if err != nil {
+		return Callback{}, err
+	}
 	callback := Callback{}
 	err = json.Unmarshal(body, &callback)
 	if err != nil {
@@ -336,8 +348,10 @@ func (c *SmsClient) CallbackDel(callback_url string) (Callback, error) {
 	params.Set("url", callback_url)
 
 	body, err := c.makeRequest("/callback/del", params)
-
 	callback := Callback{}
+	if err != nil {
+		return Callback{}, err
+	}
 	err = json.Unmarshal(body, &callback)
 	if err != nil {
 		return Callback{}, err
@@ -349,7 +363,9 @@ func (c *SmsClient) CallbackDel(callback_url string) (Callback, error) {
 // Выгрузка всех callback обработчиков
 func (c *SmsClient) CallbackGet() (Callback, error) {
 	body, err := c.makeRequest("/callback/get", url.Values{})
-
+	if err != nil {
+		return Callback{}, err
+	}
 	callback := Callback{}
 	err = json.Unmarshal(body, &callback)
 	if err != nil {
