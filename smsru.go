@@ -97,25 +97,18 @@ func CreateMultipleSMS(sms ...*Sms) *Sms {
 func (c *SmsClient) makeRequest(endpoint string, params url.Values) ([]byte, error) {
 	params.Set("api_id", c.ApiId)
 	params.Set("json", "1")
-	u := API_URL + endpoint + "?" + params.Encode()
 
-	response, err := c.Http.Get(u)
+	response, err := c.Http.Get(API_URL + endpoint + "?" + params.Encode())
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
 
-	body, err := ioutil.ReadAll(response.Body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return body, err
+	return ioutil.ReadAll(response.Body)
 }
 
 // Отправка СМС сообщения
-func (c *SmsClient) SmsSend(p *Sms) (SendedSms, error) {
+func (c *SmsClient) SmsSend(p *Sms) (*SendedSms, error) {
 	var params = url.Values{}
 
 	if len(p.Multi) > 0 {
@@ -154,37 +147,37 @@ func (c *SmsClient) SmsSend(p *Sms) (SendedSms, error) {
 
 	body, err := c.makeRequest("/sms/send", params)
 	if err != nil {
-		return SendedSms{}, err
+		return nil, err
 	}
 
-	sendedSms := SendedSms{}
-	err = json.Unmarshal(body, &sendedSms)
+	sendedSms := &SendedSms{}
+	err = json.Unmarshal(body, sendedSms)
 	if err != nil {
-		return SendedSms{}, err
+		return nil, err
 	}
 
 	return sendedSms, nil
 }
 
 // Проверка статуса сообщения
-func (c *SmsClient) SmsStatus(sms_id string) (SmsStatus, error) {
+func (c *SmsClient) SmsStatus(sms_id string) (*SmsStatus, error) {
 	var params = url.Values{}
 
 	params.Set("sms_id", sms_id)
 
 	body, err := c.makeRequest("/sms/status", params)
 
-	smsstatuslist := SmsStatus{}
-	err = json.Unmarshal(body, &smsstatuslist)
+	smsStatuslist := &SmsStatus{}
+	err = json.Unmarshal(body, smsStatuslist)
 	if err != nil {
-		return SmsStatus{}, err
+		return nil, err
 	}
 
-	return smsstatuslist, err
+	return smsStatuslist, err
 }
 
 // Проверка стоимости сообщения перед отправкой
-func (c *SmsClient) SmsCost(p *Sms) (Cost, error) {
+func (c *SmsClient) SmsCost(p *Sms) (*Cost, error) {
 	var params = url.Values{}
 	params.Set("to", p.To)
 	params.Set("text", p.Text)
@@ -194,82 +187,82 @@ func (c *SmsClient) SmsCost(p *Sms) (Cost, error) {
 
 	body, err := c.makeRequest("/sms/cost", params)
 	if err != nil {
-		return Cost{}, err
+		return nil, err
 	}
 
-	cost := Cost{}
-	err = json.Unmarshal(body, &cost)
+	cost := &Cost{}
+	err = json.Unmarshal(body, cost)
 	if err != nil {
-		return Cost{}, err
+		return nil, err
 	}
 
 	return cost, nil
 }
 
 // Остаток на балансе
-func (c *SmsClient) MyBalance() (Balance, error) {
+func (c *SmsClient) MyBalance() (*Balance, error) {
 	body, err := c.makeRequest("/my/balance", url.Values{})
 	if err != nil {
-		return Balance{}, err
+		return nil, err
 	}
 
-	balance := Balance{}
-	err = json.Unmarshal(body, &balance)
+	balance := &Balance{}
+	err = json.Unmarshal(body, balance)
 	if err != nil {
-		return Balance{}, err
+		return nil, err
 	}
 
 	return balance, nil
 }
 
 // Получить информацию о бесплатных сообщениях и их использовании
-func (c *SmsClient) MyFree() (Free, error) {
+func (c *SmsClient) MyFree() (*Free, error) {
 	body, err := c.makeRequest("/my/free", url.Values{})
 	if err != nil {
-		return Free{}, err
+		return nil, err
 	}
 
-	free := Free{}
-	err = json.Unmarshal(body, &free)
+	free := &Free{}
+	err = json.Unmarshal(body, free)
 	if err != nil {
-		return Free{}, err
+		return nil, err
 	}
 
 	return free, err
 }
 
 // Проверка информации о дневном лимите
-func (c *SmsClient) MyLimit() (Limit, error) {
+func (c *SmsClient) MyLimit() (*Limit, error) {
 	body, err := c.makeRequest("/my/limit", url.Values{})
 	if err != nil {
-		return Limit{}, err
+		return nil, err
 	}
-	limit := Limit{}
-	err = json.Unmarshal(body, &limit)
+	limit := &Limit{}
+	err = json.Unmarshal(body, limit)
 	if err != nil {
-		return Limit{}, err
+		return nil, err
 	}
 
 	return limit, err
 }
 
 // Получение списка одобренных отправителей
-func (c *SmsClient) MySenders() (Senders, error) {
+func (c *SmsClient) MySenders() (*Senders, error) {
 	body, err := c.makeRequest("/my/senders", url.Values{})
 	if err != nil {
-		return Senders{}, err
+		return nil, err
 	}
-	senders := Senders{}
-	err = json.Unmarshal(body, &senders)
+	senders := &Senders{}
+	err = json.Unmarshal(body, senders)
 	if err != nil {
-		return Senders{}, err
+		return nil, err
 	}
 
 	return senders, err
 }
 
 // Добавление номера в стоплист
-func (c *SmsClient) StoplistAdd(phone string, text string) (StopList, error) {
+func (c *SmsClient) StopListAdd(phone string, text string) (*StopList, error) {
 	var params = url.Values{}
 
 	params.Set("stoplist_phone", phone)
@@ -277,99 +270,100 @@ func (c *SmsClient) StoplistAdd(phone string, text string) (StopList, error) {
 
 	body, err := c.makeRequest("/stoplist/add", params)
 	if err != nil {
-		return StopList{}, err
+		return nil, err
 	}
-	stoplist := StopList{}
-	err = json.Unmarshal(body, &stoplist)
+	stopList := &StopList{}
+	err = json.Unmarshal(body, stopList)
 	if err != nil {
-		return StopList{}, err
+		return nil, err
 	}
 
-	return stoplist, err
+	return stopList, err
 }
 
 // Удаление номера из стоплиста
-func (c *SmsClient) StoplistDel(phone string) (StopList, error) {
+func (c *SmsClient) StopListDel(phone string) (*StopList, error) {
 	var params = url.Values{}
 
 	params.Set("stoplist_phone", phone)
 
 	body, err := c.makeRequest("/stoplist/del", params)
 	if err != nil {
-		return StopList{}, err
+		return nil, err
 	}
-	stoplist := StopList{}
-	err = json.Unmarshal(body, &stoplist)
+	stopList := &StopList{}
+	err = json.Unmarshal(body, stopList)
 	if err != nil {
-		return StopList{}, err
+		return nil, err
 	}
 
-	return stoplist, err
+	return stopList, err
 }
 
 // Выгрузка всего стоплиста
-func (c *SmsClient) StoplistGet() (StopList, error) {
+func (c *SmsClient) StopListGet() (*StopList, error) {
 	body, err := c.makeRequest("/stoplist/get", url.Values{})
 	if err != nil {
-		return StopList{}, err
+		return nil, err
 	}
-	stoplist := StopList{}
-	err = json.Unmarshal(body, &stoplist)
+	stopList := &StopList{}
+	err = json.Unmarshal(body, stopList)
 	if err != nil {
-		return StopList{}, err
+		return nil, err
 	}
 
-	return stoplist, err
+	return stopList, err
 }
 
 // Добавление callback обработчика
-func (c *SmsClient) CallbackAdd(callback_url string) (Callback, error) {
+func (c *SmsClient) CallbackAdd(callback_url string) (*Callback, error) {
 	var params = url.Values{}
 
 	params.Set("url", callback_url)
 
 	body, err := c.makeRequest("/callback/add", params)
 	if err != nil {
-		return Callback{}, err
+		return nil, err
 	}
-	callback := Callback{}
-	err = json.Unmarshal(body, &callback)
+	callback := &Callback{}
+	err = json.Unmarshal(body, callback)
 	if err != nil {
-		return Callback{}, err
+		return nil, err
 	}
 
 	return callback, err
 }
 
 // Удаление callback обработчика
-func (c *SmsClient) CallbackDel(callback_url string) (Callback, error) {
+func (c *SmsClient) CallbackDel(callback_url string) (*Callback, error) {
 	var params = url.Values{}
 
 	params.Set("url", callback_url)
 
 	body, err := c.makeRequest("/callback/del", params)
-	callback := Callback{}
+
 	if err != nil {
-		return Callback{}, err
+		return nil, err
 	}
+	callback := &Callback{}
 	err = json.Unmarshal(body, &callback)
 	if err != nil {
-		return Callback{}, err
+		return nil, err
 	}
 
 	return callback, err
 }
 
 // Выгрузка всех callback обработчиков
-func (c *SmsClient) CallbackGet() (Callback, error) {
+func (c *SmsClient) CallbackGet() (*Callback, error) {
 	body, err := c.makeRequest("/callback/get", url.Values{})
 	if err != nil {
-		return Callback{}, err
+		return nil, err
 	}
-	callback := Callback{}
-	err = json.Unmarshal(body, &callback)
+	callback := &Callback{}
+	err = json.Unmarshal(body, callback)
 	if err != nil {
-		return Callback{}, err
+		return nil, err
 	}
 
 	return callback, err
